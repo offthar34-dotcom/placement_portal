@@ -2,224 +2,135 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Placement Portal</title>
-    
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        .role-selection-container {
-            max-width: 900px;
-            margin: 3rem auto;
-            animation: slideUp 0.5s ease-out;
-        }
-        
-        .role-card {
-            background: white;
-            border-radius: 1rem;
-            padding: 3rem 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 3px solid transparent;
-            height: 100%;
-            min-height: 250px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .role-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-            border-color: #4f46e5;
-        }
-        
-        .role-card.active {
-            border-color: #4f46e5;
-            background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
-        }
-        
-        .role-card-icon {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            color: #4f46e5;
-        }
-        
-        .role-card-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-        }
-        
-        .role-card-desc {
-            color: #64748b;
-            font-size: 1rem;
-        }
-        
-        .login-form-container {
-            display: none;
-            max-width: 500px;
-            margin: 2rem auto;
-            animation: slideUp 0.5s ease-out;
-        }
-        
-        .login-form-container.show {
-            display: block;
-        }
-        
-        .back-button {
-            margin-bottom: 1rem;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Placement Portal Login</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f7fb;
+}
+
+/* center everything */
+.main-container{
+    max-width:600px;
+    margin:auto;
+    margin-top:80px;
+    text-align:center;
+}
+
+.role-btn{
+    width:200px;
+    margin:15px;
+    padding:15px;
+    font-size:18px;
+}
+
+.login-form{
+    display:none;
+    margin-top:40px;
+}
+
+</style>
+
 </head>
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-graduation-cap"></i>
-                <span>Placement Portal</span>
-            </a>
-        </div>
-    </nav>
+<div class="main-container">
 
-    <div class="container">
+<h2 class="mb-4">Placement Portal</h2>
+<p>Select Login Type</p>
 
-        <!-- Role Selection View -->
-        <div id="roleSelection" class="role-selection-container">
-            <div class="text-center mb-5">
-                <h1 class="display-5 fw-bold mb-3" style="color: #1e293b;">Welcome to Placement Portal</h1>
-                <p class="lead" style="color: #475569;">Please select how you want to login</p>
-            </div>
+<!-- ROLE SELECTION -->
 
-            {% if error %}
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i>
-                {{error}}
-            </div>
-            {% endif %}
+<div id="roleSection">
 
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="role-card" onclick="selectRole('student')">
-                        <div class="role-card-icon">
-                            <i class="fas fa-user-graduate"></i>
-                        </div>
-                        <div class="role-card-title">As a Student</div>
-                        <div class="role-card-desc">Access placement drives and apply</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="role-card" onclick="selectRole('company')">
-                        <div class="role-card-icon">
-                            <i class="fas fa-building"></i>
-                        </div>
-                        <div class="role-card-title">As a Company</div>
-                        <div class="role-card-desc">Post drives and manage applications</div>
-                    </div>
-                </div>
-            </div>
+<button class="btn btn-primary role-btn" onclick="selectRole('student')">
+Student Login
+</button>
 
-            <div class="text-center mt-5">
-                <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 2px solid #e2e8f0;">
-                    <p class="mb-3 fw-bold" style="font-size: 1.1rem; color: #1e293b;">
-                        <i class="fas fa-user-shield"></i> Administrator?
-                    </p>
-                    <button class="btn btn-primary btn-lg" onclick="selectRole('admin')" style="box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);">
-                        <i class="fas fa-shield-alt"></i> Login as Admin
-                    </button>
-                </div>
-            </div>
-        </div>
+<button class="btn btn-success role-btn" onclick="selectRole('company')">
+Company Login
+</button>
 
-        <!-- Login Form View -->
-        <div id="loginForm" class="login-form-container">
-            <button class="btn btn-outline-primary back-button" onclick="backToRoleSelection()">
-                <i class="fas fa-arrow-left"></i> Back
-            </button>
+<br>
 
-            <div class="form-container">
-                <h2 id="loginTitle">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Login
-                </h2>
+<button class="btn btn-dark role-btn" onclick="selectRole('admin')">
+Admin Login
+</button>
 
-                <form method="POST">
-                    <input type="hidden" name="role" id="selectedRole" value="">
+</div>
 
-                    <div class="form-group mb-3">
-                        <label class="form-label">
-                            <i class="fas fa-envelope"></i> Email Address
-                        </label>
-                        <input type="email" class="form-control" name="email" placeholder="Enter your email address" required>
-                    </div>
+<!-- LOGIN FORM -->
 
-                    <div class="form-group mb-4">
-                        <label class="form-label">
-                            <i class="fas fa-lock"></i> Password
-                        </label>
-                        <input type="password" class="form-control" name="password" placeholder="Enter your password" required>
-                    </div>
+<div id="loginForm" class="login-form">
 
-                    <button type="submit" class="btn btn-primary w-100 mb-3">
-                        <i class="fas fa-sign-in-alt"></i> Login to Account
-                    </button>
-                </form>
+<h3 id="loginTitle"></h3>
 
-                <div class="text-center mt-4">
-                    <p class="text-muted mb-2">Don't have an account?</p>
-                    <a href="/register" class="btn btn-outline-primary">
-                        <i class="fas fa-user-plus"></i> Create New Account
-                    </a>
-                </div>
-            </div>
-        </div>
+<form method="POST">
 
-    </div>
+<input type="hidden" name="role" id="role">
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        function selectRole(role) {
-            document.getElementById('selectedRole').value = role;
-            document.getElementById('roleSelection').style.display = 'none';
-            document.getElementById('loginForm').classList.add('show');
-            
-            // Update title based on role
-            const titles = {
-                'student': '<i class="fas fa-user-graduate"></i> Student Login',
-                'company': '<i class="fas fa-building"></i> Company Login',
-                'admin': '<i class="fas fa-user-shield"></i> Admin Login'
-            };
-            document.getElementById('loginTitle').innerHTML = titles[role];
-        }
-        
-        function backToRoleSelection() {
-            document.getElementById('roleSelection').style.display = 'block';
-            document.getElementById('loginForm').classList.remove('show');
-            document.getElementById('selectedRole').value = '';
-        }
-    </script>
+<div class="mb-3 text-start">
+<label>Email</label>
+<input type="email" name="email" class="form-control" required>
+</div>
+
+<div class="mb-3 text-start">
+<label>Password</label>
+<input type="password" name="password" class="form-control" required>
+</div>
+
+<button class="btn btn-primary w-100">Login</button>
+
+</form>
+
+<br>
+
+<button class="btn btn-link" onclick="goBack()">← Back</button>
+
+<br><br>
+
+<p>New user?</p>
+
+<a href="/register" class="btn btn-outline-primary">Register</a>
+
+</div>
+
+</div>
+
+<script>
+
+function selectRole(role){
+
+document.getElementById("roleSection").style.display="none";
+document.getElementById("loginForm").style.display="block";
+
+document.getElementById("role").value=role;
+
+let title="";
+
+if(role=="student") title="Student Login";
+if(role=="company") title="Company Login";
+if(role=="admin") title="Admin Login";
+
+document.getElementById("loginTitle").innerText=title;
+
+}
+
+function goBack(){
+
+document.getElementById("roleSection").style.display="block";
+document.getElementById("loginForm").style.display="none";
+
+}
+
+</script>
 
 </body>
-
 </html>
