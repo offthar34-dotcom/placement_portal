@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Placement History</title>
+</head>
+
+<body>
+
+<h2>Placement History</h2>
+
+<table border="1">
+
+<tr>
+<th>Company</th>
+<th>Role</th>
+<th>Status</th>
+</tr>
+
+{% for p in placements %}
+
+<tr>
+
+<td>{{p.company}}</td>
+<td>{{p.role}}</td>
+<td>{{p.status}}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+</html>
