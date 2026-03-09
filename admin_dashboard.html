@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <title>Admin Dashboard</title>
-
 </head>
 
 <body>
 
 <h2>Admin Dashboard</h2>
 
+<hr>
+
 <h3>Statistics</h3>
 
-<table border="1" cellpadding="10">
+<table border="1">
+
 <tr>
 <th>Students</th>
 <th>Companies</th>
@@ -29,41 +30,26 @@
 
 </table>
 
-
 <hr>
 
+<h3>Pending Companies</h3>
 
-<h3>Approve Companies</h3>
-
-<form method="GET">
-
-<input name="company_search" placeholder="Search company by name"
-value="{{ request.args.get('company_search','') }}">
-
-<button type="submit">Search</button>
-
-</form>
-
-<br>
-
-{% if companies_list %}
-
-<table border="1" cellpadding="8">
+<table border="1">
 
 <tr>
 <th>Company Name</th>
 <th>Action</th>
 </tr>
 
-{% for c in companies_list %}
+{% for company in pending_companies %}
 
 <tr>
-<td>{{c.company_name}}</td>
+
+<td>{{company.company_name}}</td>
 
 <td>
-<a href="/approve_company/{{c.id}}">
-Approve
-</a>
+<a href="/approve_company/{{company.id}}">Approve</a> |
+<a href="/reject_company/{{company.id}}">Reject</a>
 </td>
 
 </tr>
@@ -72,409 +58,47 @@ Approve
 
 </table>
 
-{% else %}
-
-<p>No companies pending approval</p>
-
-{% endif %}
-
-
 <hr>
 
+<h3>Pending Placement Drives</h3>
+
+<table border="1">
+
+<tr>
+<th>Company</th>
+<th>Job Role</th>
+<th>Action</th>
+</tr>
+
+{% for drive in pending_drives %}
+
+<tr>
+
+<td>{{drive.company}}</td>
+<td>{{drive.job_title}}</td>
+
+<td>
+<a href="/approve_drive/{{drive.id}}">Approve</a> |
+<a href="/reject_drive/{{drive.id}}">Reject</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<hr>
 
 <h3>Search Students</h3>
 
 <form method="GET">
 
-<input name="student_search_name"
-placeholder="Search by name"
-value="{{ request.args.get('student_search_name','') }}">
-
-<input name="student_search_id"
-placeholder="Search by student ID"
-value="{{ request.args.get('student_search_id','') }}">
+<input name="search_student" placeholder="Enter student name">
 
 <button type="submit">Search</button>
 
 </form>
-
-<br>
-
-
-{% if students_search_results %}
-
-<table border="1" cellpadding="8">
-
-<tr>
-<th>Name</th>
-<th>Email</th>
-<th>Student ID</th>
-<th>CGPA</th>
-<th>Skills</th>
-</tr>
-
-{% for s in students_search_results %}
-
-{% set prof = student_profiles.get(s.id) %}
-
-<tr>
-
-<td>{{s.name}}</td>
-<td>{{s.email}}</td>
-
-<td>
-{% if prof %}
-{{prof.student_id}}
-{% else %}
--
-{% endif %}
-</td>
-
-<td>
-{% if prof %}
-{{prof.cgpa}}
-{% else %}
--
-{% endif %}
-</td>
-
-<td>
-{% if prof %}
-{{prof.skills}}
-{% else %}
--
-{% endif %}
-</td>
-
-</tr>
-
-{% endfor %}
-
-</table>
-
-{% else %}
-
-<p>No students found</p>
-
-{% endif %}
-
-
-
-<hr>
-
-
-<h3>Review Student Applications</h3>
-
-{% if application_reviews %}
-
-<table border="1" cellpadding="8">
-
-<tr>
-<th>Student</th>
-<th>Drive</th>
-<th>Profile</th>
-<th>Eligibility</th>
-<th>Admin Status</th>
-<th>Company Status</th>
-<th>Action</th>
-</tr>
-
-{% for item in application_reviews %}
-
-<tr>
-
-<td>
-{{item.student.name}} <br>
-{{item.student.email}}
-</td>
-
-<td>
-{{item.drive.job_role}} <br>
-{{item.drive.salary}} LPA
-</td>
-
-<td>
-
-{% if item.profile %}
-
-10th: {{item.profile.tenth_percentage}} <br>
-12th: {{item.profile.twelfth_percentage}} <br>
-CGPA: {{item.profile.cgpa}} <br>
-Skills: {{item.profile.skills}}
-
-{% else %}
-
-Profile Missing
-
-{% endif %}
-
-</td>
-
-<td>
-
-{% if item.is_eligible %}
-
-Eligible
-
-{% else %}
-
-Not Eligible ({{item.reason}})
-
-{% endif %}
-
-</td>
-
-<td>{{item.application.status}}</td>
-
-<td>{{item.company_status}}</td>
-
-<td>
-
-<a href="/approve_application/{{item.application.id}}">
-Approve
-</a>
-
-|
-
-<a href="/reject_application/{{item.application.id}}">
-Reject
-</a>
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</table>
-
-{% else %}
-
-<p>No applications to review</p>
-
-{% endif %}
-
-
-
-<hr>
-
-
-<h3>Approve Drives</h3>
-
-{% if drive_reviews %}
-
-<table border="1" cellpadding="8">
-
-<tr>
-<th>Company</th>
-<th>Job Role</th>
-<th>Salary</th>
-<th>Criteria</th>
-<th>Skills</th>
-<th>Action</th>
-</tr>
-
-{% for item in drive_reviews %}
-
-<tr>
-
-<td>{{item.company.company_name}}</td>
-
-<td>{{item.drive.job_role}}</td>
-
-<td>{{item.drive.salary}} LPA</td>
-
-<td>
-
-10th: {{item.drive.min_tenth_percentage}} |
-12th: {{item.drive.min_twelfth_percentage}} |
-CGPA: {{item.drive.min_cgpa}}
-
-</td>
-
-<td>{{item.drive.required_skills}}</td>
-
-<td>
-
-<a href="/approve_drive/{{item.drive.id}}">
-Approve
-</a>
-
-|
-
-<a href="/reject_drive/{{item.drive.id}}">
-Reject
-</a>
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</table>
-
-{% else %}
-
-<p>No drives pending approval</p>
-
-{% endif %}
-
-
-
-<hr>
-
-
-<h3>Manage Students</h3>
-
-<table border="1" cellpadding="8">
-
-<tr>
-<th>Name</th>
-<th>Email</th>
-<th>Status</th>
-<th>Action</th>
-</tr>
-
-{% for s in all_students %}
-
-<tr>
-
-<td>{{s.name}}</td>
-<td>{{s.email}}</td>
-
-<td>
-
-{% if s.blacklisted %}
-Blacklisted
-{% else %}
-Active
-{% endif %}
-
-</td>
-
-<td>
-
-{% if s.blacklisted %}
-
-<a href="/unblacklist_student/{{s.id}}">
-Unblacklist
-</a>
-
-{% else %}
-
-<a href="/blacklist_student/{{s.id}}">
-Blacklist
-</a>
-
-{% endif %}
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</table>
-
-
-
-<hr>
-
-
-<h3>Manage Companies</h3>
-
-<table border="1" cellpadding="8">
-
-<tr>
-<th>Company</th>
-<th>Email</th>
-<th>Status</th>
-<th>Action</th>
-</tr>
-
-{% for c in all_companies %}
-
-{% set comp_user = company_users.get(c.user_id) %}
-
-<tr>
-
-<td>{{c.company_name}}</td>
-
-<td>
-{% if comp_user %}
-{{comp_user.email}}
-{% else %}
--
-{% endif %}
-</td>
-
-<td>
-
-{% if comp_user and comp_user.blacklisted %}
-Blacklisted
-{% else %}
-Active
-{% endif %}
-
-</td>
-
-<td>
-
-{% if comp_user %}
-
-{% if comp_user.blacklisted %}
-
-<a href="/unblacklist_company/{{comp_user.id}}">
-Unblacklist
-</a>
-
-{% else %}
-
-<a href="/blacklist_company/{{comp_user.id}}">
-Blacklist
-</a>
-
-{% endif %}
-
-{% endif %}
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</table>
-
-
-
-<hr>
-
-
-<h3>Statistics Chart</h3>
-
-<canvas id="chart"></canvas>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-
-new Chart(document.getElementById("chart"),{
-
-type:"bar",
-
-data:{
-labels:["Students","Companies","Drives","Applications"],
-datasets:[{
-data:[{{students}},{{companies}},{{drives}},{{applications}}]
-}]
-}
-
-})
-
-</script>
-
 
 </body>
 </html>
