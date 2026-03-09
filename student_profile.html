@@ -1,260 +1,30 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student Profile</title>
+</head>
 
-{% block content %}
+<body>
 
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0">
-                <i class="fas fa-user-circle"></i>
-                Student Profile
-            </h2>
-            <a href="/student" class="btn btn-outline-primary">
-                <i class="fas fa-arrow-left"></i> Back to Dashboard
-            </a>
-        </div>
-    </div>
-</div>
+<h2>Update Profile</h2>
 
-<div class="row">
-    <div class="col-lg-12">
+<form method="POST">
 
-        <!-- Profile Edit Form -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5>
-                    <i class="fas fa-edit"></i>
-                    Edit Profile Information
-                </h5>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="/student/update_profile" enctype="multipart/form-data">
+Name<br>
+<input name="name" value="{{student.name}}"><br><br>
 
-                    <!-- Personal Information Section -->
-                    <div class="mb-4">
-                        <h6 class="text-primary mb-3 pb-2 border-bottom">
-                            <i class="fas fa-user"></i> Personal Information
-                        </h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-signature"></i> Full Name *
-                                </label>
-                                <input type="text" name="name" class="form-control" value="{{user.name}}" required placeholder="Enter your full name">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-id-badge"></i> Student ID
-                                </label>
-                                <input type="text" class="form-control" value="{{profile.student_id if profile and profile.student_id else 'Not set'}}" disabled>
-                                <small class="text-muted">
-                                    <i class="fas fa-lock"></i> Student ID cannot be changed
-                                </small>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-venus-mars"></i> Gender
-                                </label>
-                                <select name="gender" class="form-select">
-                                    <option value="">-- Select Gender --</option>
-                                    <option value="Male" {% if profile and profile.gender == 'Male' %}selected{% endif %}>Male</option>
-                                    <option value="Female" {% if profile and profile.gender == 'Female' %}selected{% endif %}>Female</option>
-                                    <option value="Other" {% if profile and profile.gender == 'Other' %}selected{% endif %}>Other</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-calendar"></i> Date of Birth
-                                </label>
-                                <input type="date" name="dob" class="form-control" value="{{profile.dob if profile and profile.dob else ''}}">
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-flag"></i> Nationality
-                                </label>
-                                <input type="text" name="nationality" class="form-control" placeholder="e.g., Indian" value="{{profile.nationality if profile and profile.nationality else ''}}">
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-camera"></i> Profile Photo
-                                </label>
-                                <input type="file" name="photo" class="form-control" accept="image/*">
-                                <small class="text-muted d-block mt-2">
-                                    {% if profile and profile.photo_path %}
-                                        <i class="fas fa-check-circle text-success"></i> Current photo uploaded
-                                    {% else %}
-                                        <i class="fas fa-info-circle"></i> No photo uploaded yet
-                                    {% endif %}
-                                </small>
-                            </div>
-                        </div>
-                    </div>
+CGPA<br>
+<input name="cgpa" value="{{student.cgpa}}"><br><br>
 
-                    <!-- Contact Information Section -->
-                    <div class="mb-4">
-                        <h6 class="text-primary mb-3 pb-2 border-bottom">
-                            <i class="fas fa-address-book"></i> Contact Information
-                        </h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-envelope"></i> Email Address
-                                </label>
-                                <input type="email" name="email" class="form-control" placeholder="your.email@example.com" value="{{profile.email if profile and profile.email else ''}}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-mobile-alt"></i> Mobile Number
-                                </label>
-                                <input type="tel" name="mobile" class="form-control" placeholder="e.g., +91 9876543210" value="{{profile.mobile if profile and profile.mobile else ''}}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-phone"></i> Alternate Mobile Number
-                                </label>
-                                <input type="tel" name="alternate_mobile" class="form-control" placeholder="e.g., +91 9876543211" value="{{profile.alternate_mobile if profile and profile.alternate_mobile else ''}}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-id-card"></i> Aadhar Number
-                                </label>
-                                <input type="text" name="aadhar" class="form-control" placeholder="e.g., 1234 5678 9012" value="{{profile.aadhar if profile and profile.aadhar else ''}}" maxlength="14">
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-map-marker-alt"></i> Address
-                                </label>
-                                <textarea name="address" class="form-control" rows="3" placeholder="Enter your full address">{{profile.address if profile and profile.address else ''}}</textarea>
-                            </div>
-                        </div>
-                    </div>
+Skills<br>
+<input name="skills" value="{{student.skills}}"><br><br>
 
-                    <!-- Social Profiles Section -->
-                    <div class="mb-4">
-                        <h6 class="text-primary mb-3 pb-2 border-bottom">
-                            <i class="fas fa-share-alt"></i> Social Profiles
-                        </h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fab fa-github"></i> GitHub Profile
-                                </label>
-                                <input type="url" name="github" class="form-control" placeholder="https://github.com/yourusername" value="{{profile.github if profile and profile.github else ''}}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fab fa-linkedin"></i> LinkedIn Profile
-                                </label>
-                                <input type="url" name="linkedin" class="form-control" placeholder="https://linkedin.com/in/yourusername" value="{{profile.linkedin if profile and profile.linkedin else ''}}">
-                            </div>
-                        </div>
-                    </div>
+Resume<br>
+<input type="file" name="resume"><br><br>
 
-                    <!-- Academic Information Section -->
-                    <div class="mb-4">
-                        <h6 class="text-primary mb-3 pb-2 border-bottom">
-                            <i class="fas fa-graduation-cap"></i> Academic Information
-                        </h6>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-percentage"></i> 10th Grade Percentage
-                                </label>
-                                <input type="number" name="tenth_percentage" step="0.01" min="0" max="100" class="form-control" placeholder="e.g., 85.5" value="{{profile.tenth_percentage if profile and profile.tenth_percentage else ''}}">
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-percentage"></i> 12th Grade Percentage
-                                </label>
-                                <input type="number" name="twelfth_percentage" step="0.01" min="0" max="100" class="form-control" placeholder="e.g., 88.0" value="{{profile.twelfth_percentage if profile and profile.twelfth_percentage else ''}}">
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-star"></i> CGPA (out of 10)
-                                </label>
-                                <input type="number" name="cgpa" step="0.01" min="0" max="10" class="form-control" placeholder="e.g., 7.5" value="{{profile.cgpa if profile and profile.cgpa else ''}}">
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-code"></i> Skills
-                                </label>
-                                <input type="text" name="skills" class="form-control" placeholder="e.g., Python, Java, Web Development, Machine Learning" value="{{profile.skills if profile and profile.skills else ''}}">
-                                <small class="text-muted">
-                                    <i class="fas fa-info-circle"></i> Separate skills with commas
-                                </small>
-                            </div>
-                        </div>
-                    </div>
+<button type="submit">Update</button>
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-success btn-lg">
-                            <i class="fas fa-save"></i> Save Profile Changes
-                        </button>
-                    </div>
+</form>
 
-                </form>
-            </div>
-        </div>
-
-        <!-- Resume Management Section -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5>
-                    <i class="fas fa-file-alt"></i>
-                    Resume Management
-                </h5>
-            </div>
-            <div class="card-body">
-                {% if profile and profile.resume_path %}
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i>
-                    <strong>Resume Uploaded</strong> - You have a resume on file.
-                </div>
-                <div class="d-flex gap-2 mb-4">
-                    <a href="/student/download_resume" class="btn btn-primary">
-                        <i class="fas fa-download"></i> Download Current Resume
-                    </a>
-                </div>
-                <hr>
-                <h6 class="mb-3">Update Your Resume</h6>
-                <form method="POST" action="/student/upload_resume" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label for="resume" class="form-label">
-                            <i class="fas fa-upload"></i> Choose New Resume File
-                        </label>
-                        <input type="file" name="resume" id="resume" class="form-control" accept=".pdf,.doc,.docx" required>
-                        <small class="form-text text-muted d-block mt-2">
-                            <i class="fas fa-info-circle"></i> Only PDF, DOC, and DOCX files allowed (Max: 16MB)
-                        </small>
-                    </div>
-                    <button type="submit" class="btn btn-warning">
-                        <i class="fas fa-sync-alt"></i> Replace Resume
-                    </button>
-                </form>
-                {% else %}
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i>
-                    <strong>No Resume Uploaded Yet</strong> - Upload your resume to apply for placement drives.
-                </div>
-                <form method="POST" action="/student/upload_resume" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label for="resume" class="form-label">
-                            <i class="fas fa-upload"></i> Upload Your Resume
-                        </label>
-                        <input type="file" name="resume" id="resume" class="form-control" accept=".pdf,.doc,.docx" required>
-                        <small class="form-text text-muted d-block mt-2">
-                            <i class="fas fa-info-circle"></i> Only PDF, DOC, and DOCX files allowed (Max: 16MB)
-                        </small>
-                    </div>
-                    <button type="submit" class="btn btn-success btn-lg">
-                        <i class="fas fa-cloud-upload-alt"></i> Upload Resume
-                    </button>
-                </form>
-                {% endif %}
-            </div>
-        </div>
-
-    </div>
-</div>
-
-{% endblock %}
+</body>
+</html>
