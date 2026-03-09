@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="form-container" style="max-width: 600px;">
+
+    <h2>
+        <i class="fas fa-user-plus"></i>
+        Create Account
+    </h2>
+
+    {% if error %}
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-circle"></i>
+        {{error}}
+    </div>
+    {% endif %}
+
+    <form method="POST">
+
+        <div class="form-group mb-3">
+            <label class="form-label">
+                <i class="fas fa-user-tag"></i> I am registering as
+            </label>
+            <select name="role" id="roleSelect" class="form-select" required>
+                <option value="">-- Select Your Role --</option>
+                <option value="student">
+                    <i class="fas fa-user-graduate"></i> Student
+                </option>
+                <option value="company">
+                    <i class="fas fa-building"></i> Company
+                </option>
+            </select>
+            <small class="text-muted d-block mt-2">
+                <i class="fas fa-info-circle"></i> Choose the appropriate role for your account
+            </small>
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">
+                <i class="fas fa-user"></i> Full Name
+            </label>
+            <input type="text" name="name" class="form-control" placeholder="Enter your full name" required>
+        </div>
+
+        <div id="student_fields" style="display: none;">
+            <div class="form-group mb-3">
+                <label class="form-label">
+                    <i class="fas fa-id-card"></i> Student ID
+                </label>
+                <input type="text" name="student_id" class="form-control" placeholder="Enter your student ID">
+                <small class="text-muted d-block mt-2">
+                    <i class="fas fa-info-circle"></i> Your unique student identification number
+                </small>
+            </div>
+        </div>
+
+        <div id="company_fields" style="display: none;">
+            <div class="form-group mb-3">
+                <label class="form-label">
+                    <i class="fas fa-envelope"></i> Email Address
+                </label>
+                <input type="email" name="email" class="form-control" placeholder="company@example.com">
+                <small class="text-muted d-block mt-2">
+                    <i class="fas fa-info-circle"></i> Official company email address
+                </small>
+            </div>
+        </div>
+
+        <div class="form-group mb-4">
+            <label class="form-label">
+                <i class="fas fa-lock"></i> Password
+            </label>
+            <input type="password" name="password" class="form-control" placeholder="Create a strong password" required>
+            <small class="text-muted d-block mt-2">
+                <i class="fas fa-shield-alt"></i> Use a combination of letters, numbers, and special characters
+            </small>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 btn-lg mb-3">
+            <i class="fas fa-user-plus"></i> Create Account
+        </button>
+
+    </form>
+
+    <div class="text-center mt-4">
+        <p class="text-muted mb-2">Already have an account?</p>
+        <a href="/login" class="btn btn-outline-primary">
+            <i class="fas fa-sign-in-alt"></i> Login Here
+        </a>
+    </div>
+
+</div>
+
+<script>
+const roleSelect = document.getElementById('roleSelect');
+const studentFields = document.getElementById('student_fields');
+const companyFields = document.getElementById('company_fields');
+
+function toggleFields() {
+    const selectedRole = roleSelect.value;
+    
+    if (selectedRole === 'student') {
+        studentFields.style.display = 'block';
+        companyFields.style.display = 'none';
+        
+        // Make student_id required for students
+        document.querySelector('input[name="student_id"]').setAttribute('required', 'required');
+        const emailInput = document.querySelector('#company_fields input[name="email"]');
+        if (emailInput) emailInput.removeAttribute('required');
+    } else if (selectedRole === 'company') {
+        studentFields.style.display = 'none';
+        companyFields.style.display = 'block';
+        
+        // Make email required for companies
+        document.querySelector('#company_fields input[name="email"]').setAttribute('required', 'required');
+        const studentIdInput = document.querySelector('input[name="student_id"]');
+        if (studentIdInput) studentIdInput.removeAttribute('required');
+    } else {
+        studentFields.style.display = 'none';
+        companyFields.style.display = 'none';
+        
+        const studentIdInput = document.querySelector('input[name="student_id"]');
+        const emailInput = document.querySelector('#company_fields input[name="email"]');
+        if (studentIdInput) studentIdInput.removeAttribute('required');
+        if (emailInput) emailInput.removeAttribute('required');
+    }
+}
+
+roleSelect.addEventListener('change', toggleFields);
+toggleFields();
+</script>
+
+{% endblock %}

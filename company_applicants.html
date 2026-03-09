@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>👥 Applicants for {{drive.job_role}}</h2>
+
+<div class="mb-3">
+<a href="/company" class="btn btn-secondary">← Back to Drives</a>
+</div>
+
+<div class="card mb-3">
+<div class="card-body">
+<p class="mb-0"><strong>💺 Position:</strong> {{drive.job_role}} | <strong>💰 Salary:</strong> {{drive.salary}} LPA</p>
+</div>
+</div>
+
+{% if applicant_details %}
+<div class="table-responsive">
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>👤 Student</th>
+<th>📛 ID</th>
+<th>📧 Email</th>
+<th>🎓 CGPA</th>
+<th>💻 Skills</th>
+<th>✅ Eligible</th>
+<th>📊 Status</th>
+<th>⚙️ Actions</th>
+</tr>
+</thead>
+<tbody>
+{% for item in applicant_details %}
+<tr>
+<td><strong>{{item.student.name}}</strong></td>
+<td>
+{% if item.profile %}
+  <code>{{item.profile.student_id}}</code>
+{% else %}
+  <span class="text-muted">-</span>
+{% endif %}
+</td>
+<td>{{item.student.email}}</td>
+<td>
+{% if item.profile %}
+  <span class="badge bg-info">{{item.profile.cgpa}}</span>
+{% else %}
+  <span class="text-muted">-</span>
+{% endif %}
+</td>
+<td>
+{% if item.profile and item.profile.skills %}
+  <small>{{item.profile.skills}}</small>
+{% else %}
+  <span class="text-muted">-</span>
+{% endif %}
+</td>
+<td>
+{% if item.is_eligible %}
+  <span class="badge bg-success">✓ Eligible</span>
+{% else %}
+  <span class="badge bg-danger">✗ {{item.reason}}</span>
+{% endif %}
+</td>
+<td>
+{% if item.application.company_status == 'Selected' %}
+  <span class="badge bg-success" style="font-size: 0.9rem;">✓ Selected</span>
+{% elif item.application.company_status == 'Rejected' %}
+  <span class="badge bg-danger" style="font-size: 0.9rem;">✗ Rejected</span>
+{% else %}
+  <span class="badge bg-warning text-dark" style="font-size: 0.9rem;">⏳ Pending</span>
+{% endif %}
+</td>
+<td>
+{% if item.application.company_status == 'Pending' %}
+  <a href="/company/select_student/{{item.application.id}}" class="btn btn-success btn-sm">✓ Select</a>
+  <a href="/company/reject_student/{{item.application.id}}" class="btn btn-danger btn-sm">✗ Reject</a>
+{% else %}
+  <span class="text-muted small">{{item.application.company_status}}</span>
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% else %}
+<div class="alert alert-info">
+📭 No applicants for this drive yet.
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% endblock %}

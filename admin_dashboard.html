@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>📊 Admin Dashboard</h2>
+
+<div class="row mb-4">
+
+<div class="col-md-3 col-sm-6">
+<div class="stat-box">
+<div class="stat-number">{{students}}</div>
+<div class="stat-label">👨‍🎓 Students</div>
+</div>
+</div>
+
+<div class="col-md-3 col-sm-6">
+<div class="stat-box">
+<div class="stat-number">{{companies}}</div>
+<div class="stat-label">🏢 Companies</div>
+</div>
+</div>
+
+<div class="col-md-3 col-sm-6">
+<div class="stat-box">
+<div class="stat-number">{{drives}}</div>
+<div class="stat-label">📋 Drives</div>
+</div>
+</div>
+
+<div class="col-md-3 col-sm-6">
+<div class="stat-box">
+<div class="stat-number">{{applications}}</div>
+<div class="stat-label">📝 Applications</div>
+</div>
+</div>
+
+</div>
+
+<h3 class="mt-4">✅ Approve Companies</h3>
+
+<form method="GET" class="mb-3">
+<div class="row">
+<div class="col-md-9">
+<input name="company_search" class="form-control" placeholder="🔍 Search companies by name" value="{{ request.args.get('company_search', '') }}">
+</div>
+<div class="col-md-3">
+<button type="submit" class="btn btn-primary w-100">Search</button>
+</div>
+</div>
+</form>
+
+{% if companies_list %}
+{% for c in companies_list %}
+
+<div class="card mb-3">
+<div class="card-body">
+<div class="d-flex justify-content-between align-items-center">
+<div>
+<h6 class="card-title">{{c.company_name}}</h6>
+</div>
+<div>
+<a href="/approve_company/{{c.id}}" class="btn btn-success btn-sm">✓ Approve</a>
+</div>
+</div>
+</div>
+</div>
+
+{% endfor %}
+{% elif request.args.get('company_search') %}
+<div class="alert alert-info">⚠️ No companies found matching "{{request.args.get('company_search')}}".</div>
+{% else %}
+<div class="alert alert-info">✓ No unapproved companies pending approval.</div>
+{% endif %}
+
+<h3 class="mt-4">🔍 Search Students</h3>
+
+<form method="GET" class="mb-3">
+<div class="row">
+<div class="col-md-5">
+<input name="student_search_name" class="form-control mb-2" placeholder="🔍 Search by name" value="{{ request.args.get('student_search_name', '') }}">
+</div>
+<div class="col-md-4">
+<input name="student_search_id" class="form-control mb-2" placeholder="🔍 Search by student ID" value="{{ request.args.get('student_search_id', '') }}">
+</div>
+<div class="col-md-3">
+<button type="submit" class="btn btn-primary w-100 mb-2">Search</button>
+</div>
+</div>
+</form>
+
+{% if students_search_results %}
+<div class="table-responsive">
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>👤 Name</th>
+<th>📧 Email</th>
+<th>📛 Student ID</th>
+<th>🎓 CGPA</th>
+<th>💻 Skills</th>
+</tr>
+</thead>
+<tbody>
+{% for s in students_search_results %}
+{% set prof = student_profiles.get(s.id) %}
+<tr>
+<td><strong>{{s.name}}</strong></td>
+<td>{{s.email}}</td>
+<td>{% if prof %}<code>{{prof.student_id}}</code>{% else %}<span class="text-muted">-</span>{% endif %}</td>
+<td>{% if prof %}<span class="badge bg-info">{{prof.cgpa}}</span>{% else %}<span class="text-muted">-</span>{% endif %}</td>
+<td>{% if prof %}<small>{{prof.skills}}</small>{% else %}<span class="text-muted">-</span>{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% elif request.args.get('student_search_name') or request.args.get('student_search_id') %}
+<div class="alert alert-info">⚠️ No students found matching your search criteria.</div>
+{% else %}
+<div class="alert alert-info">💡 Enter a name or student ID to search.</div>
+{% endif %}
+
+<h3 class="mt-4">📋 Review Student Applications</h3>
+
+{% if application_reviews %}
+<div class="table-responsive">
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>👤 Student</th>
+<th>💼 Drive</th>
+<th>📊 Profile</th>
+<th>✅ Eligibility</th>
+<th>🔏 Admin</th>
+<th>🏢 Company</th>
+<th>⚙️ Action</th>
+</tr>
+</thead>
+<tbody>
+{% for item in application_reviews %}
+<tr>
+<td>
+<strong>{{item.student.name}}</strong><br>
+<small class="text-muted">{{item.student.email}}</small>
+</td>
+<td>
+<strong>{{item.drive.job_role}}</strong><br>
+<small class="text-muted">{{item.drive.salary}} LPA</small>
+</td>
+<td>
+{% if item.profile %}
+<small>
+📐 10th: {{item.profile.tenth_percentage}}%<br>
+📐 12th: {{item.profile.twelfth_percentage}}%<br>
+🎓 CGPA: {{item.profile.cgpa}}<br>
+💻 Skills: {{item.profile.skills}}
+</small>
+{% else %}
+<span class="text-muted small">Profile Missing</span>
+{% endif %}
+</td>
+<td>
+{% if item.is_eligible %}
+<span class="badge bg-success">✓ Eligible</span>
+{% else %}
+<span class="badge bg-danger">✗ {{item.reason}}</span>
+{% endif %}
+</td>
+<td>
+<span class="badge bg-info">{{item.application.status}}</span>
+</td>
+<td>
+<span class="badge bg-warning text-dark">{{item.company_status}}</span>
+</td>
+<td>
+<a href="/approve_application/{{item.application.id}}" class="btn btn-success btn-sm">✓ Approve</a>
+<a href="/reject_application/{{item.application.id}}" class="btn btn-danger btn-sm">✗ Reject</a>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% else %}
+<p class="text-muted">No pending applications to review.</p>
+{% endif %}
+
+<h3 class="mt-4">✅ Approve Drives</h3>
+
+{% if drive_reviews %}
+<div class="table-responsive">
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>🏢 Company</th>
+<th>💼 Job Role</th>
+<th>💰 Salary</th>
+<th>📊 Criteria</th>
+<th>💻 Skills</th>
+<th>⚙️ Action</th>
+</tr>
+</thead>
+<tbody>
+{% for item in drive_reviews %}
+<tr>
+<td><strong>{{item.company.company_name}}</strong></td>
+<td>{{item.drive.job_role}}</td>
+<td><span class="badge bg-info">{{item.drive.salary}} LPA</span></td>
+<td>
+<small>
+10th: {{item.drive.min_tenth_percentage}}% | 
+12th: {{item.drive.min_twelfth_percentage}}% | 
+CGPA: {{item.drive.min_cgpa}}
+</small>
+</td>
+<td><small>{% if item.drive.required_skills %}{{item.drive.required_skills}}{% else %}<span class="text-muted">-</span>{% endif %}</small></td>
+<td>
+<a href="/approve_drive/{{item.drive.id}}" class="btn btn-success btn-sm">✓ Approve</a>
+<a href="/reject_drive/{{item.drive.id}}" class="btn btn-danger btn-sm" onclick="return confirm('Reject and delete this drive?')">✗ Reject</a>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% else %}
+<div class="alert alert-info">✓ No pending drives to approve.</div>
+{% endif %}
+
+<h3 class="mt-4">🔒 Manage Users - Blacklist</h3>
+
+<h5 class="mt-4">👨‍🎓 Students</h5>
+<div class="table-responsive">
+<table class="table table-striped table-sm">
+<thead>
+<tr>
+<th>👤 Name</th>
+<th>📧 Email</th>
+<th>Status</th>
+<th>⚙️ Action</th>
+</tr>
+</thead>
+<tbody>
+{% for s in all_students %}
+<tr>
+<td><strong>{{s.name}}</strong></td>
+<td>{{s.email}}</td>
+<td>
+{% if s.blacklisted %}
+  <span class="badge bg-danger">🚫 Blacklisted</span>
+{% else %}
+  <span class="badge bg-success">✓ Active</span>
+{% endif %}
+</td>
+<td>
+{% if s.blacklisted %}
+  <a href="/unblacklist_student/{{s.id}}" class="btn btn-success btn-sm">Unblacklist</a>
+{% else %}
+  <a href="/blacklist_student/{{s.id}}" class="btn btn-danger btn-sm" onclick="return confirm('Blacklist this student?')">Blacklist</a>
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<h5 class="mt-4">🏢 Companies</h5>
+<div class="table-responsive">
+<table class="table table-striped table-sm">
+<thead>
+<tr>
+<th>🏢 Company Name</th>
+<th>📧 Contact Email</th>
+<th>Status</th>
+<th>⚙️ Action</th>
+</tr>
+</thead>
+<tbody>
+{% for c in all_companies %}
+{% set comp_user = company_users.get(c.user_id) %}
+<tr>
+<td><strong>{{c.company_name}}</strong></td>
+<td>{% if comp_user %}{{comp_user.email}}{% else %}<span class="text-muted">-</span>{% endif %}</td>
+<td>
+{% if comp_user and comp_user.blacklisted %}
+  <span class="badge bg-danger">🚫 Blacklisted</span>
+{% else %}
+  <span class="badge bg-success">✓ Active</span>
+{% endif %}
+</td>
+<td>
+{% if comp_user %}
+  {% if comp_user.blacklisted %}
+    <a href="/unblacklist_company/{{comp_user.id}}" class="btn btn-success btn-sm">Unblacklist</a>
+  {% else %}
+    <a href="/blacklist_company/{{comp_user.id}}" class="btn btn-danger btn-sm" onclick="return confirm('Blacklist this company?')">Blacklist</a>
+  {% endif %}
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<canvas id="chart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+new Chart(document.getElementById("chart"),{
+
+type:"bar",
+
+data:{
+labels:["Students","Companies","Drives","Applications"],
+
+datasets:[{
+data:[{{students}},{{companies}},{{drives}},{{applications}}]
+}]
+
+}
+
+})
+
+</script>
+
+{% endblock %}
