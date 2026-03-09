@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Placement Portal Login</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f7fb;
+}
+
+/* center everything */
+.main-container{
+    max-width:600px;
+    margin:auto;
+    margin-top:80px;
+    text-align:center;
+}
+
+.role-btn{
+    width:200px;
+    margin:15px;
+    padding:15px;
+    font-size:18px;
+}
+
+.login-form{
+    display:none;
+    margin-top:40px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="main-container">
+
+<h2 class="mb-4">Placement Portal</h2>
+<p>Select Login Type</p>
+
+<!-- ROLE SELECTION -->
+
+<div id="roleSection">
+
+<button class="btn btn-primary role-btn" onclick="selectRole('student')">
+Student Login
+</button>
+
+<button class="btn btn-success role-btn" onclick="selectRole('company')">
+Company Login
+</button>
+
+<br>
+
+<button class="btn btn-dark role-btn" onclick="selectRole('admin')">
+Admin Login
+</button>
+
+</div>
+
+<!-- LOGIN FORM -->
+
+<div id="loginForm" class="login-form">
+
+<h3 id="loginTitle"></h3>
+
+<form method="POST">
+
+<input type="hidden" name="role" id="role">
+
+<div class="mb-3 text-start">
+<label>Email</label>
+<input type="email" name="email" class="form-control" required>
+</div>
+
+<div class="mb-3 text-start">
+<label>Password</label>
+<input type="password" name="password" class="form-control" required>
+</div>
+
+<button class="btn btn-primary w-100">Login</button>
+
+</form>
+
+<br>
+
+<button class="btn btn-link" onclick="goBack()">← Back</button>
+
+<br><br>
+
+<p>New user?</p>
+
+<a href="/register" class="btn btn-outline-primary">Register</a>
+
+</div>
+
+</div>
+
+<script>
+
+function selectRole(role){
+
+document.getElementById("roleSection").style.display="none";
+document.getElementById("loginForm").style.display="block";
+
+document.getElementById("role").value=role;
+
+let title="";
+
+if(role=="student") title="Student Login";
+if(role=="company") title="Company Login";
+if(role=="admin") title="Admin Login";
+
+document.getElementById("loginTitle").innerText=title;
+
+}
+
+function goBack(){
+
+document.getElementById("roleSection").style.display="block";
+document.getElementById("loginForm").style.display="none";
+
+}
+
+</script>
+
+</body>
+</html>
